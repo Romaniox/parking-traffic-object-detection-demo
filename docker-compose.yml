@@ -1,0 +1,45 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      # Single data root holding models/, images/, db/.
+      # DATABASE_URL defaults to sqlite under DATA_DIR, no need to set it.
+      DATA_DIR: /data
+      MAX_UPLOAD_BYTES: ${MAX_UPLOAD_BYTES:-10485760}
+      # Default to the real model. Override MODEL_NAME=stub for a model-free run,
+      # or point MODEL_WEIGHTS at a different file under /data/models.
+      MODEL_NAME: ${MODEL_NAME:-yolo}
+      MODEL_WEIGHTS: ${MODEL_WEIGHTS:-/data/models/yolo26l.pt}
+    volumes:
+      # Bind the host data dir so models (weights you drop in), saved images and
+      # the SQLite db all live in one visible place: ./backend/data on the host.
+      # Override the host path with DATA_HOST_DIR.
+      - ${DATA_HOST_DIR:-./backend/data}:/data
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    environment:
+      # TLS mode for Caddy:
+      #   localhost  -> local HTTPS via internal CA (only works on this machine)
+      #   :80        -> plain HTTP, reachable from other devices on the LAN
+      #                 (open http://<this-machine-IP>:${HTTP_PORT:-18080})
+      #   a domain   -> automatic Let's Encrypt certificate (production)
+      SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
+    depends_on:
+      - backend
+    # Uncommon host ports to avoid clashes with anything already on 80/443.
+    # Override with HTTP_PORT / HTTPS_PORT if needed.
+    ports:
+      - "${HTTP_PORT:-18080}:80"
+      - "${HTTPS_PORT:-18443}:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:
