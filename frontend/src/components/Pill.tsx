@@ -1,0 +1,25 @@
+import type { AppStatus } from '../types'
+import { Icon } from './icons'
+
+const TEXT: Record<AppStatus, string> = {
+  idle: 'Готов к загрузке',
+  selected: 'Изображение загружено',
+  processing: 'Обработка…',
+  success: 'Готово',
+  error: 'Ошибка',
+}
+
+export function Pill({ status }: { status: AppStatus }) {
+  return (
+    <span className={`pill pill--${status}`} aria-live="polite">
+      {status === 'processing' ? (
+        <span className="pill__spin">
+          <Icon name="spinner" size={12} />
+        </span>
+      ) : (
+        <span className="pill__dot" />
+      )}
+      <span>{TEXT[status]}</span>
+    </span>
+  )
+}

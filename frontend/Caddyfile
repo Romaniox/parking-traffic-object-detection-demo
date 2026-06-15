@@ -1,0 +1,29 @@
+# Reverse proxy + static SPA host.
+#
+# SITE_ADDRESS controls TLS:
+#   - "localhost" (default): Caddy serves HTTPS with its internal CA (dev).
+#   - a real domain (e.g. detect.example.com): Caddy auto-provisions a
+#     Let's Encrypt certificate (prod).
+{$SITE_ADDRESS:localhost} {
+	encode gzip
+
+	# API and detection images go to the backend (path preserved).
+	# Cap the request body before it reaches Python so oversized uploads are
+	# rejected early — no memory wasted reading a multi-GB body.
+	# Slightly above the backend MAX_UPLOAD_BYTES (10 MB) to allow for
+	# multipart framing overhead.
+	@api path /detect* /detections*
+	handle @api {
+		request_body {
+			max_size 12MB
+		}
+		reverse_proxy backend:8000
+	}
+
+	# Everything else: serve the built SPA with history fallback.
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

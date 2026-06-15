@@ -1,0 +1,17 @@
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+# Smoke tests hit the network (download weights); opt in with `pytest -m smoke`.
+addopts = "-m 'not smoke'"
+markers = [
+    "smoke: real-model inference test, requires ultralytics/torch installed",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+# B008: FastAPI dependency defaults (File(...), Depends(...)) are idiomatic.
+ignore = ["B008"]
