@@ -30,9 +30,10 @@ def _to_detections(results) -> list[RawDetection]:
 class YoloDetector(Detector):
     name = "yolo"
 
-    def __init__(self, weights: str = DEFAULT_WEIGHTS, conf: float = 0.25):
+    def __init__(self, weights: str = DEFAULT_WEIGHTS, conf: float = 0.25, imgsz: int = 1280):
         self.weights = weights
         self.conf = conf
+        self.imgsz = imgsz
         self._model = None
 
     def _load_model(self):
@@ -50,5 +51,5 @@ class YoloDetector(Detector):
 
     def infer(self, image) -> list[RawDetection]:
         model = self._load_model()
-        results = model.predict(image, conf=self.conf, device="cpu", verbose=False, classes=TARGET_CLASS_IDS)
+        results = model.predict(image, conf=self.conf, device="cpu", verbose=False, classes=TARGET_CLASS_IDS, imgsz=self.imgsz)
         return _to_detections(results)

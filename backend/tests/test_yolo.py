@@ -82,10 +82,9 @@ def test_factory_uses_explicit_weights():
     assert detector.weights == "/models/custom.pt"
 
 
-def test_yolo_predict_passes_target_class_ids():
-    """infer() must forward classes=TARGET_CLASS_IDS to model.predict so the
-    YOLO engine itself skips non-parking detections."""
-    from unittest.mock import MagicMock, patch
+def test_yolo_predict_passes_target_class_ids_and_imgsz():
+    """infer() must forward classes=TARGET_CLASS_IDS and imgsz=1280 to model.predict."""
+    from unittest.mock import MagicMock
 
     from PIL import Image
 
@@ -100,11 +99,9 @@ def test_yolo_predict_passes_target_class_ids():
     img = Image.new("RGB", (320, 240))
     detector.infer(img)
 
-    call_kwargs = fake_model.predict.call_args
-    assert call_kwargs is not None
-    assert call_kwargs.kwargs.get("classes") == TARGET_CLASS_IDS or (
-        len(call_kwargs.args) >= 2 and call_kwargs.args[1] == TARGET_CLASS_IDS
-    ), f"classes= not passed; got {call_kwargs}"
+    kw = fake_model.predict.call_args.kwargs
+    assert kw.get("classes") == TARGET_CLASS_IDS, f"classes= not passed; got {kw}"
+    assert kw.get("imgsz") == 1280, f"imgsz= not passed; got {kw}"
 
 
 def test_stub_emits_only_target_classes():
