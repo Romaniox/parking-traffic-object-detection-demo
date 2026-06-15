@@ -29,7 +29,7 @@ describe('F2 — interactivity', () => {
     const user = userEvent.setup()
     render(<App />)
     const before = document.documentElement.dataset.theme
-    await user.click(screen.getByRole('button', { name: /Сменить тему/i }))
+    await user.click(screen.getByRole('button', { name: /Toggle theme/i }))
     expect(document.documentElement.dataset.theme).not.toBe(before)
   })
 
@@ -39,9 +39,9 @@ describe('F2 — interactivity', () => {
     await user.upload(screen.getByTestId('file-input'), makeFile())
 
     expect(screen.getByText('100%')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: /Увеличить/i }))
+    await user.click(screen.getByRole('button', { name: /Zoom in/i }))
     expect(screen.getByText('125%')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: /Сбросить масштаб/i }))
+    await user.click(screen.getByRole('button', { name: /Reset zoom/i }))
     expect(screen.getByText('100%')).toBeInTheDocument()
   })
 
@@ -53,7 +53,7 @@ describe('F2 — interactivity', () => {
     const stage = document.querySelector('.canvas__stage')!
     fireEvent.wheel(stage, { deltaY: -100 })
     await waitFor(() =>
-      expect(Number(screen.getByRole('button', { name: /Сбросить масштаб/i }).textContent!.replace('%', ''))).toBeGreaterThan(100),
+      expect(Number(screen.getByRole('button', { name: /Reset zoom/i }).textContent!.replace('%', ''))).toBeGreaterThan(100),
     )
   })
 
@@ -62,7 +62,7 @@ describe('F2 — interactivity', () => {
     const user = userEvent.setup()
     render(<App />)
     await user.upload(screen.getByTestId('file-input'), makeFile())
-    await user.click(screen.getByRole('button', { name: /Обработать изображение/i }))
+    await user.click(screen.getByRole('button', { name: /Detect objects/i }))
     await waitFor(() => expect(document.querySelectorAll('.canvas__overlay rect')).toHaveLength(1))
     expect(document.querySelectorAll('.bbox-label')).toHaveLength(0)
   })
@@ -72,7 +72,7 @@ describe('F2 — interactivity', () => {
     const user = userEvent.setup()
     render(<App />)
     await user.upload(screen.getByTestId('file-input'), makeFile())
-    await user.click(screen.getByRole('button', { name: /Обработать изображение/i }))
+    await user.click(screen.getByRole('button', { name: /Detect objects/i }))
     await waitFor(() => expect(document.querySelector('.canvas__overlay rect')).toBeTruthy())
 
     const before = Number(document.querySelector('.canvas__overlay rect')!.getAttribute('stroke-width'))
@@ -90,8 +90,8 @@ describe('F2 — interactivity', () => {
     render(<App />)
 
     await user.upload(screen.getByTestId('file-input'), makeFile())
-    await user.click(screen.getByRole('button', { name: /Обработать изображение/i }))
-    const btn = await screen.findByRole('button', { name: /Скачать результат/i })
+    await user.click(screen.getByRole('button', { name: /Detect objects/i }))
+    const btn = await screen.findByRole('button', { name: /Download result/i })
     await user.click(btn)
     await waitFor(() => expect(dl).toHaveBeenCalled())
   })

@@ -71,7 +71,7 @@ export function Sidebar({
               {fmtBytes(file.size)} · {(file.type || 'image').replace('image/', '').toUpperCase()}
             </div>
           </div>
-          <button className="icon-btn" onClick={onReset} aria-label="Удалить и загрузить другое">
+          <button className="icon-btn" onClick={onReset} aria-label="Remove and upload another">
             <Icon name="close" size={14} />
           </button>
         </div>
@@ -88,18 +88,18 @@ export function Sidebar({
               <span className="spinner spinner--sm">
                 <Icon name="spinner" size={14} />
               </span>{' '}
-              Обработка…
+              Processing…
             </>
           ) : (
             <>
-              <Icon name="play" size={14} /> Обработать изображение
+              <Icon name="play" size={14} /> Detect objects
             </>
           )}
         </button>
         {status === 'error' && (
           <div className="cta__err">
             <Icon name="alert" size={13} />
-            <span>{errorMessage || 'Что-то пошло не так. Повторите попытку.'}</span>
+            <span>{errorMessage || 'Something went wrong. Please try again.'}</span>
           </div>
         )}
       </div>
@@ -111,10 +111,10 @@ export function Sidebar({
       {showResults && (
         <div className="actions">
           <button className="btn btn--ghost btn--full" onClick={onDownload}>
-            <Icon name="download" size={14} /> Скачать результат
+            <Icon name="download" size={14} /> Download result
           </button>
           <button className="btn btn--ghost btn--sm btn--full" onClick={onReset}>
-            <Icon name="refresh" size={14} /> Новое изображение
+            <Icon name="refresh" size={14} /> New image
           </button>
         </div>
       )}

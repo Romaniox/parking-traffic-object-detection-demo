@@ -47,14 +47,14 @@ export async function detect(file: File): Promise<DetectResponse> {
   try {
     resp = await fetch(apiUrl('/detect'), { method: 'POST', body: form })
   } catch {
-    return { success: false, error: 'Не удалось связаться с сервером' }
+    return { success: false, error: 'Could not reach the server' }
   }
 
   let data: DetectResponse
   try {
     data = (await resp.json()) as DetectResponse
   } catch {
-    return { success: false, error: 'Некорректный ответ сервера' }
+    return { success: false, error: 'Invalid response from server' }
   }
 
   // image_url comes back backend-relative (/detections/{id}/image); make it

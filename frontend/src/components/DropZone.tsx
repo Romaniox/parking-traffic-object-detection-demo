@@ -26,7 +26,7 @@ export function DropZone({ onFile, error }: DropZoneProps) {
     const f = files?.[0]
     if (!f) return
     if (!isAllowed(f)) {
-      setWarn('Только JPG, JPEG или PNG')
+      setWarn('Only JPG, JPEG or PNG')
       return
     }
     setWarn(null)
@@ -73,22 +73,22 @@ export function DropZone({ onFile, error }: DropZoneProps) {
       <div className="drop__icon">
         <Icon name="image" size={28} />
       </div>
-      <div className="drop__title">Перетащите изображение</div>
-      <div className="drop__sub">или нажмите, чтобы выбрать&nbsp;файл</div>
+      <div className="drop__title">Drop an image here</div>
+      <div className="drop__sub">or click to select a&nbsp;file</div>
 
       <div className="drop__actions" onClick={(e) => e.stopPropagation()}>
         <button className="btn btn--ghost btn--sm" onClick={() => inputRef.current?.click()}>
-          <Icon name="upload" size={14} /> Выбрать файл
+          <Icon name="upload" size={14} /> Select file
         </button>
         <button
           className="btn btn--ghost btn--sm drop__camera"
           onClick={() => cameraRef.current?.click()}
         >
-          <Icon name="camera" size={14} /> Камера
+          <Icon name="camera" size={14} /> Camera
         </button>
       </div>
 
-      <div className="drop__meta">JPG · JPEG · PNG · до {MAX_MB} МБ</div>
+      <div className="drop__meta">JPG · JPEG · PNG · up to {MAX_MB} MB</div>
 
       {(warn || error) && (
         <div className="drop__err">

@@ -2,11 +2,11 @@ import type { AppStatus } from '../types'
 import { Icon } from './icons'
 
 const TEXT: Record<AppStatus, string> = {
-  idle: 'Готов к загрузке',
-  selected: 'Изображение загружено',
-  processing: 'Обработка…',
-  success: 'Готово',
-  error: 'Ошибка',
+  idle: 'Ready',
+  selected: 'Image selected',
+  processing: 'Processing…',
+  success: 'Done',
+  error: 'Error',
 }
 
 export function Pill({ status }: { status: AppStatus }) {

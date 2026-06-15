@@ -14,7 +14,7 @@ describe('DropZone — file type filtering', () => {
     render(<DropZone onFile={onFile} />)
     await userEvent.upload(screen.getByTestId('file-input'), makeFile('image/jpeg'))
     expect(onFile).toHaveBeenCalled()
-    expect(screen.queryByText(/Только JPG/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Only JPG/i)).not.toBeInTheDocument()
   })
 
   it('accepts image/png', async () => {
@@ -29,7 +29,7 @@ describe('DropZone — file type filtering', () => {
     render(<DropZone onFile={onFile} />)
     await userEvent.upload(screen.getByTestId('file-input'), makeFile('image/jpg'))
     expect(onFile).not.toHaveBeenCalled()
-    expect(screen.getByText(/Только JPG/i)).toBeInTheDocument()
+    expect(screen.getByText(/Only JPG/i)).toBeInTheDocument()
   })
 
   it('rejects unsupported types (e.g. text/plain) — onChange does not fire', async () => {

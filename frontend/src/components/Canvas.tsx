@@ -104,14 +104,14 @@ export function Canvas({
     <div className="canvas">
       {hasResults && (
         <div className="canvas__toolbar canvas__toolbar--tl">
-          <div className="seg" role="tablist" aria-label="Просмотр">
+          <div className="seg" role="tablist" aria-label="View">
             <button
               role="tab"
               aria-selected={view === 'original'}
               className={view === 'original' ? 'is-on' : ''}
               onClick={() => onSwitchView('original')}
             >
-              Оригинал
+              Original
             </button>
             <button
               role="tab"
@@ -119,7 +119,7 @@ export function Canvas({
               className={view === 'annotated' ? 'is-on' : ''}
               onClick={() => onSwitchView('annotated')}
             >
-              Аннотировано
+              Annotated
             </button>
           </div>
         </div>
@@ -213,8 +213,8 @@ export function Canvas({
               <div className="spinner">
                 <Icon name="spinner" size={20} />
               </div>
-              <div className="canvas__veil-txt">Обнаружение объектов</div>
-              <div className="canvas__veil-sub">Обычно 3–8 секунд</div>
+              <div className="canvas__veil-txt">Detecting objects</div>
+              <div className="canvas__veil-sub">Usually 3–8 seconds</div>
             </div>
           </div>
         )}
@@ -222,7 +222,7 @@ export function Canvas({
         {status === 'error' && imageUrl && (
           <div className="canvas__error">
             <Icon name="alert" size={18} />
-            <span>Не удалось обработать изображение</span>
+            <span>Failed to process image</span>
           </div>
         )}
       </div>

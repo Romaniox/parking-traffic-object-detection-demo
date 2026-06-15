@@ -29,7 +29,7 @@ afterEach(() => vi.restoreAllMocks())
 describe('App detection flow (redesign)', () => {
   it('disables the process button until an image is selected', () => {
     render(<App />)
-    expect(screen.getByRole('button', { name: /Обработать изображение/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /Detect objects/i })).toBeDisabled()
   })
 
   it('runs the full path: count, per-class stats, and one rect per box', async () => {
@@ -38,7 +38,7 @@ describe('App detection flow (redesign)', () => {
     render(<App />)
 
     await user.upload(screen.getByTestId('file-input'), makeFile())
-    const button = screen.getByRole('button', { name: /Обработать изображение/i })
+    const button = screen.getByRole('button', { name: /Detect objects/i })
     expect(button).toBeEnabled()
     await user.click(button)
 
@@ -59,22 +59,22 @@ describe('App detection flow (redesign)', () => {
     const user = userEvent.setup()
     render(<App />)
     await user.upload(screen.getByTestId('file-input'), makeFile())
-    const button = screen.getByRole('button', { name: /Обработать изображение/i })
+    const button = screen.getByRole('button', { name: /Detect objects/i })
     await user.click(button)
     expect(button).toBeDisabled()
     resolve(SUCCESS)
     await waitFor(() => expect(screen.getByText('3')).toBeInTheDocument())
   })
 
-  it('toggling to "Оригинал" hides the box overlay', async () => {
+  it('toggling to "Original" hides the box overlay', async () => {
     vi.spyOn(client, 'detect').mockResolvedValue(SUCCESS)
     const user = userEvent.setup()
     render(<App />)
     await user.upload(screen.getByTestId('file-input'), makeFile())
-    await user.click(screen.getByRole('button', { name: /Обработать изображение/i }))
+    await user.click(screen.getByRole('button', { name: /Detect objects/i }))
     await waitFor(() => expect(document.querySelectorAll('.canvas__overlay rect')).toHaveLength(3))
 
-    await user.click(screen.getByRole('tab', { name: /Оригинал/i }))
+    await user.click(screen.getByRole('tab', { name: /Original/i }))
     expect(document.querySelectorAll('.canvas__overlay rect')).toHaveLength(0)
   })
 
@@ -83,7 +83,7 @@ describe('App detection flow (redesign)', () => {
     const user = userEvent.setup()
     render(<App />)
     await user.upload(screen.getByTestId('file-input'), makeFile())
-    await user.click(screen.getByRole('button', { name: /Обработать изображение/i }))
+    await user.click(screen.getByRole('button', { name: /Detect objects/i }))
     expect(await screen.findByText(/Inference failed/i)).toBeInTheDocument()
   })
 })

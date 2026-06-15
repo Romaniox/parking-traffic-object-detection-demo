@@ -7,11 +7,11 @@ interface StatsProps {
 }
 
 const EMPTY: Record<AppStatus, string> = {
-  idle: 'Загрузите изображение, чтобы начать.',
-  selected: 'Нажмите «Обработать изображение».',
-  processing: 'Анализируем изображение…',
+  idle: 'Upload an image to begin.',
+  selected: 'Click "Detect objects" to start.',
+  processing: 'Analysing image…',
   success: '',
-  error: 'Результаты появятся после успешной обработки.',
+  error: 'Results will appear after a successful detection.',
 }
 
 export function Stats({ status, result }: StatsProps) {
@@ -20,11 +20,11 @@ export function Stats({ status, result }: StatsProps) {
   return (
     <div className="stats">
       <div className="stats__head">
-        <span className="label">Статистика</span>
+        <span className="label">Results</span>
       </div>
 
       <div className={`stats__total ${show ? 'is-on' : ''}`}>
-        <div className="stats__total-label">Обнаружено объектов</div>
+        <div className="stats__total-label">Objects detected</div>
         <div className="stats__total-num">{show ? result.count : '—'}</div>
       </div>
 
