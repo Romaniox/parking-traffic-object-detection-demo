@@ -36,7 +36,7 @@ def _to_detections(results) -> list[RawDetection]:
 class YoloDetector(Detector):
     name = "yolo"
 
-    def __init__(self, weights: str = DEFAULT_WEIGHTS, conf: float = 0.25, imgsz: int = 1280):
+    def __init__(self, weights: str = DEFAULT_WEIGHTS, conf: float = 0.05, imgsz: int = 1280):
         self.weights = weights
         self.conf = conf
         self.imgsz = imgsz

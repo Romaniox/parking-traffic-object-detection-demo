@@ -10,14 +10,16 @@ from PIL import Image
 from app.inference.base import Detector, RawDetection
 
 # Fractional boxes (x1, y1, x2, y2) relative to image size — parking scene.
-_TEMPLATE: list[tuple[str, tuple[float, float, float, float]]] = [
-    ("person",     (0.05, 0.10, 0.20, 0.60)),
-    ("person",     (0.22, 0.12, 0.37, 0.62)),
-    ("car",        (0.40, 0.40, 0.70, 0.80)),
-    ("car",        (0.72, 0.38, 0.98, 0.78)),
-    ("bus",        (0.02, 0.35, 0.38, 0.90)),
-    ("motorcycle", (0.55, 0.55, 0.68, 0.75)),
-    ("truck",      (0.60, 0.30, 0.95, 0.70)),
+# Scores are deliberately spread across 0.39–0.95 so the confidence slider
+# produces visible changes during manual and automated testing.
+_TEMPLATE: list[tuple[str, float, tuple[float, float, float, float]]] = [
+    ("person",     0.88, (0.05, 0.10, 0.20, 0.60)),
+    ("person",     0.76, (0.22, 0.12, 0.37, 0.62)),
+    ("car",        0.95, (0.40, 0.40, 0.70, 0.80)),
+    ("car",        0.61, (0.72, 0.38, 0.98, 0.78)),
+    ("bus",        0.83, (0.02, 0.35, 0.38, 0.90)),
+    ("motorcycle", 0.52, (0.55, 0.55, 0.68, 0.75)),
+    ("truck",      0.39, (0.60, 0.30, 0.95, 0.70)),
 ]
 
 
@@ -29,8 +31,8 @@ class StubDetector(Detector):
         return [
             RawDetection(
                 cls=cls,
-                score=0.99,
+                score=score,
                 box=(x1 * w, y1 * h, x2 * w, y2 * h),
             )
-            for cls, (x1, y1, x2, y2) in _TEMPLATE
+            for cls, score, (x1, y1, x2, y2) in _TEMPLATE
         ]

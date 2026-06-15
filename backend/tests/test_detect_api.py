@@ -48,6 +48,11 @@ def test_detect_success(client, settings):
     assert b.keys() == {"class", "conf", "x", "y", "w", "h"}
     assert all(0.0 <= b[k] <= 1.0 for k in ("conf", "x", "y", "w", "h"))
 
+    # new metadata fields added to the response
+    assert body["image_width"] == 200
+    assert body["image_height"] == 150
+    assert body["model_name"] == "stub"
+
     # image_url now points at the DB-backed serving endpoint
     assert body["image_url"].startswith("/detections/")
     img = client.get(body["image_url"])

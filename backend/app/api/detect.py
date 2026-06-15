@@ -115,5 +115,8 @@ async def detect(request: Request, image: UploadFile = File(...)) -> JSONRespons
                 for b in result.boxes
             ],
             "image_url": storage.image_url(request_id),
+            "image_width": width,
+            "image_height": height,
+            "model_name": settings.model_name,
         },
     )
