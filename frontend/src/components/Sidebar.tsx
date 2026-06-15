@@ -1,4 +1,4 @@
-import type { DetectSuccess } from '../api/client'
+import type { DetectionBox } from '../api/client'
 import type { Theme } from '../theme'
 import type { AppStatus } from '../types'
 import { Icon } from './icons'
@@ -9,13 +9,16 @@ import { ThemeToggle } from './ThemeToggle'
 interface SidebarProps {
   status: AppStatus
   file: File | null
-  result: DetectSuccess | null
+  boxes: DetectionBox[]
   errorMessage: string | null
   canProcess: boolean
   theme: Theme
+  conf: number
+  onConfChange: (v: number) => void
   onToggleTheme: () => void
   onProcess: () => void
   onDownload: () => void
+  onDownloadJson: () => void
   onReset: () => void
 }
 
@@ -30,17 +33,20 @@ function fmtBytes(n: number): string {
 export function Sidebar({
   status,
   file,
-  result,
+  boxes,
   errorMessage,
   canProcess,
   theme,
+  conf,
+  onConfChange,
   onToggleTheme,
   onProcess,
   onDownload,
+  onDownloadJson,
   onReset,
 }: SidebarProps) {
   const busy = status === 'processing'
-  const showResults = status === 'success' && result !== null
+  const showResults = status === 'success'
 
   return (
     <aside className="sidebar">
@@ -106,17 +112,39 @@ export function Sidebar({
 
       <div className="divider" />
 
-      <Stats status={status} result={result} />
+      <Stats status={status} boxes={boxes} />
 
       {showResults && (
-        <div className="actions">
-          <button className="btn btn--ghost btn--full" onClick={onDownload}>
-            <Icon name="download" size={14} /> Download result
-          </button>
-          <button className="btn btn--ghost btn--sm btn--full" onClick={onReset}>
-            <Icon name="refresh" size={14} /> New image
-          </button>
-        </div>
+        <>
+          <div className="conf">
+            <div className="conf__head">
+              <span className="label">Confidence</span>
+              <span className="conf__val">{conf.toFixed(2)}</span>
+            </div>
+            <input
+              type="range"
+              className="conf__slider"
+              min="0.05"
+              max="0.95"
+              step="0.05"
+              value={conf}
+              aria-label="Confidence threshold"
+              onChange={(e) => onConfChange(Number(e.target.value))}
+            />
+          </div>
+
+          <div className="actions">
+            <button className="btn btn--ghost btn--full" onClick={onDownload}>
+              <Icon name="download" size={14} /> Download result
+            </button>
+            <button className="btn btn--ghost btn--full" onClick={onDownloadJson}>
+              <Icon name="download" size={14} /> Download JSON
+            </button>
+            <button className="btn btn--ghost btn--sm btn--full" onClick={onReset}>
+              <Icon name="refresh" size={14} /> New image
+            </button>
+          </div>
+        </>
       )}
     </aside>
   )

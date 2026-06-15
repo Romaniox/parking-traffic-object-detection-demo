@@ -29,6 +29,9 @@ export interface DetectSuccess {
   objects: DetectionObject[]
   boxes: DetectionBox[]
   image_url: string
+  image_width: number | null
+  image_height: number | null
+  model_name: string
 }
 
 export interface DetectError {

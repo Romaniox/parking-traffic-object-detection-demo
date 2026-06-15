@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -22,6 +22,9 @@ const SUCCESS: client.DetectSuccess = {
     { class: 'car', conf: 0.88, x: 0.6, y: 0.4, w: 0.3, h: 0.3 },
   ],
   image_url: '/detections/abc/image',
+  image_width: 800,
+  image_height: 600,
+  model_name: 'stub',
 }
 
 afterEach(() => vi.restoreAllMocks())
@@ -85,5 +88,35 @@ describe('App detection flow (redesign)', () => {
     await user.upload(screen.getByTestId('file-input'), makeFile())
     await user.click(screen.getByRole('button', { name: /Detect objects/i }))
     expect(await screen.findByText(/Inference failed/i)).toBeInTheDocument()
+  })
+
+  it('slider filters boxes: moving above 0.93 hides all but the highest-conf box', async () => {
+    vi.spyOn(client, 'detect').mockResolvedValue(SUCCESS)
+    const user = userEvent.setup()
+    render(<App />)
+    await user.upload(screen.getByTestId('file-input'), makeFile())
+    await user.click(screen.getByRole('button', { name: /Detect objects/i }))
+    await waitFor(() => expect(document.querySelectorAll('.canvas__overlay rect')).toHaveLength(3))
+
+    const slider = screen.getByRole('slider', { name: /confidence threshold/i })
+    fireEvent.change(slider, { target: { value: '0.93' } })
+    await waitFor(() => expect(document.querySelectorAll('.canvas__overlay rect')).toHaveLength(1))
+    expect(document.querySelector('.stats__total-num')?.textContent).toBe('1')
+  })
+
+  it('slider reset: New image returns conf to 0.25 and slider is gone', async () => {
+    vi.spyOn(client, 'detect').mockResolvedValue(SUCCESS)
+    const user = userEvent.setup()
+    render(<App />)
+    await user.upload(screen.getByTestId('file-input'), makeFile())
+    await user.click(screen.getByRole('button', { name: /Detect objects/i }))
+    await waitFor(() => expect(document.querySelectorAll('.canvas__overlay rect')).toHaveLength(3))
+
+    const slider = screen.getByRole('slider', { name: /confidence threshold/i })
+    fireEvent.change(slider, { target: { value: '0.93' } })
+    await waitFor(() => expect(document.querySelectorAll('.canvas__overlay rect')).toHaveLength(1))
+
+    await user.click(screen.getByRole('button', { name: /New image/i }))
+    expect(screen.queryByRole('slider', { name: /confidence threshold/i })).toBeNull()
   })
 })

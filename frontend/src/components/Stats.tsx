@@ -1,9 +1,9 @@
-import type { DetectSuccess } from '../api/client'
+import type { DetectionBox } from '../api/client'
 import type { AppStatus } from '../types'
 
 interface StatsProps {
   status: AppStatus
-  result: DetectSuccess | null
+  boxes: DetectionBox[]
 }
 
 const EMPTY: Record<AppStatus, string> = {
@@ -14,8 +14,15 @@ const EMPTY: Record<AppStatus, string> = {
   error: 'Results will appear after a successful detection.',
 }
 
-export function Stats({ status, result }: StatsProps) {
-  const show = status === 'success' && result !== null
+export function Stats({ status, boxes }: StatsProps) {
+  const show = status === 'success'
+
+  const count = boxes.length
+  const objMap = new Map<string, number>()
+  for (const b of boxes) objMap.set(b.class, (objMap.get(b.class) ?? 0) + 1)
+  const objects = [...objMap.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([cls, cnt]) => ({ class: cls, count: cnt }))
 
   return (
     <div className="stats">
@@ -25,12 +32,12 @@ export function Stats({ status, result }: StatsProps) {
 
       <div className={`stats__total ${show ? 'is-on' : ''}`}>
         <div className="stats__total-label">Objects detected</div>
-        <div className="stats__total-num">{show ? result.count : '—'}</div>
+        <div className="stats__total-num">{show ? count : '—'}</div>
       </div>
 
       <div className="stats__classes">
         {show ? (
-          result.objects.map((o) => (
+          objects.map((o) => (
             <div className="stats__row" key={o.class}>
               <span className="stats__swatch" aria-hidden="true" />
               <span className="stats__class">{o.class}</span>

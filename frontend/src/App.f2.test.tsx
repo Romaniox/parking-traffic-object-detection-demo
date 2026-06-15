@@ -16,6 +16,9 @@ const SUCCESS: client.DetectSuccess = {
   objects: [{ class: 'person', count: 1 }],
   boxes: [{ class: 'person', conf: 0.9, x: 0.1, y: 0.1, w: 0.2, h: 0.4 }],
   image_url: '/detections/abc/image',
+  image_width: 800,
+  image_height: 600,
+  model_name: 'stub',
 }
 
 afterEach(() => {

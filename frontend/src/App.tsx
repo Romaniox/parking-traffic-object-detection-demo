@@ -4,7 +4,7 @@ import { detect, type DetectSuccess } from './api/client'
 import { Canvas } from './components/Canvas'
 import { MAX_ZOOM, MIN_ZOOM } from './components/ZoomControls'
 import { Sidebar } from './components/Sidebar'
-import { downloadAnnotated } from './download'
+import { downloadAnnotated, downloadJSON } from './download'
 import { useTheme } from './theme'
 import type { AppStatus, CanvasView } from './types'
 
@@ -17,6 +17,9 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState<CanvasView>('annotated')
   const [zoom, setZoom] = useState(1)
+  const [conf, setConf] = useState(0.25)
+
+  const activeBoxes = result?.boxes.filter((b) => b.conf >= conf) ?? []
 
   const resetZoom = useCallback(() => setZoom(1), [])
 
@@ -48,6 +51,7 @@ function App() {
     setError(null)
     setView('annotated')
     setZoom(1)
+    setConf(0.25)
     setStatus('idle')
   }, [previewUrl])
 
@@ -68,8 +72,13 @@ function App() {
 
   const handleDownload = useCallback(() => {
     if (!previewUrl || !result) return
-    void downloadAnnotated(previewUrl, result.boxes)
-  }, [previewUrl, result])
+    void downloadAnnotated(previewUrl, activeBoxes)
+  }, [previewUrl, result, activeBoxes])
+
+  const handleDownloadJson = useCallback(() => {
+    if (!result) return
+    downloadJSON({ result, filename: file?.name ?? null, activeBoxes, conf })
+  }, [result, file, activeBoxes, conf])
 
   const canProcess = (status === 'selected' || status === 'error') && file !== null
 
@@ -100,7 +109,7 @@ function App() {
       <section className="app__canvas">
         <Canvas
           imageUrl={previewUrl}
-          boxes={result?.boxes ?? []}
+          boxes={activeBoxes}
           view={view}
           status={status}
           zoom={zoom}
@@ -114,13 +123,16 @@ function App() {
       <Sidebar
         status={status}
         file={file}
-        result={result}
+        boxes={activeBoxes}
         errorMessage={error}
         canProcess={canProcess}
         theme={theme}
+        conf={conf}
+        onConfChange={setConf}
         onToggleTheme={toggleTheme}
         onProcess={handleProcess}
         onDownload={handleDownload}
+        onDownloadJson={handleDownloadJson}
         onReset={handleReset}
       />
     </main>

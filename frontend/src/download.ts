@@ -1,4 +1,4 @@
-import type { DetectionBox } from './api/client'
+import type { DetectSuccess, DetectionBox } from './api/client'
 
 // Set to true to draw class name + confidence labels on downloaded images.
 // Mirrors the SHOW_BOX_LABELS flag in Canvas.tsx (on-screen overlay).
@@ -104,6 +104,52 @@ export async function downloadAnnotated(imageUrl: string, boxes: DetectionBox[])
   const a = document.createElement('a')
   a.href = url
   a.download = `detect_${Date.now()}.png`
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+// ─── JSON export ─────────────────────────────────────────────────────────────
+
+interface JsonExportParams {
+  result: DetectSuccess
+  filename: string | null
+  activeBoxes: DetectionBox[]
+  conf: number
+}
+
+/** Save current detection results as a structured JSON annotation file. */
+export function downloadJSON({ result, filename, activeBoxes, conf }: JsonExportParams): void {
+  const objMap = new Map<string, number>()
+  for (const b of activeBoxes) objMap.set(b.class, (objMap.get(b.class) ?? 0) + 1)
+  const objects = [...objMap.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([cls, cnt]) => ({ class: cls, count: cnt }))
+
+  const payload = {
+    filename: filename ?? null,
+    image_width: result.image_width,
+    image_height: result.image_height,
+    model: result.model_name,
+    conf_threshold: conf,
+    count: activeBoxes.length,
+    objects,
+    boxes: activeBoxes.map((b) => ({
+      class: b.class,
+      conf: b.conf,
+      x: b.x,
+      y: b.y,
+      w: b.w,
+      h: b.h,
+    })),
+  }
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `detect_${Date.now()}.json`
   document.body.appendChild(a)
   a.click()
   a.remove()
