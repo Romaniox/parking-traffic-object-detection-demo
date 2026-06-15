@@ -6,10 +6,16 @@ weights are loaded on first inference. Default weights "yolov8n.pt" are
 auto-downloaded by ultralytics on first use.
 """
 
+import logging
+
+import numpy as np
+
 from app.inference.base import Detector, RawDetection
 from app.inference.classes import TARGET_CLASS_IDS
 
 DEFAULT_WEIGHTS = "yolov8n.pt"
+
+log = logging.getLogger("detect")
 
 
 def _to_detections(results) -> list[RawDetection]:
@@ -51,5 +57,11 @@ class YoloDetector(Detector):
 
     def infer(self, image) -> list[RawDetection]:
         model = self._load_model()
-        results = model.predict(image, conf=self.conf, device="cpu", verbose=False, classes=TARGET_CLASS_IDS, imgsz=self.imgsz)
+        arr = np.asarray(image)  # PIL RGB → numpy HWC uint8
+        log.info(
+            "[yolo] input: H=%d W=%d C=%d dtype=%s",
+            arr.shape[0], arr.shape[1], arr.shape[2], arr.dtype,
+        )
+        results = model.predict(arr, conf=self.conf, device="cpu", verbose=True, classes=TARGET_CLASS_IDS, imgsz=self.imgsz)
+        log.info("[yolo] raw detections: %d", sum(len(r.boxes) for r in results))
         return _to_detections(results)

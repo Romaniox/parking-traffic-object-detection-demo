@@ -1,4 +1,5 @@
 import io
+import logging
 
 import PIL.Image
 from PIL import Image
@@ -9,6 +10,8 @@ from PIL import Image
 MAX_IMAGE_PIXELS = 50_000_000
 PIL.Image.MAX_IMAGE_PIXELS = MAX_IMAGE_PIXELS
 
+log = logging.getLogger("detect")
+
 
 def decode_image(data: bytes) -> Image.Image:
     """Decode raw bytes into an RGB image. Raises if the bytes are not an image.
@@ -17,4 +20,7 @@ def decode_image(data: bytes) -> Image.Image:
     """
     image = Image.open(io.BytesIO(data))
     image.load()
-    return image.convert("RGB")
+    log.info("[preprocess] raw mode=%s size=%s bytes=%d", image.mode, image.size, len(data))
+    rgb = image.convert("RGB")
+    log.info("[preprocess] after convert: mode=%s size=(W=%d, H=%d)", rgb.mode, rgb.size[0], rgb.size[1])
+    return rgb
