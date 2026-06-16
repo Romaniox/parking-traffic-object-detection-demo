@@ -2,7 +2,7 @@
 
 A full-stack computer vision service that detects **cars** in uploaded parking-scene images using a fine-tuned YOLO model. Annotated results render in real time directly in the browser — no page reload, no polling.
 
-**Live demo →** `https://traffic.romanvestnikov.dev/`
+**Live demo →** [https://traffic.romanvestnikov.dev/](https://traffic.romanvestnikov.dev/)
 
 ---
 
