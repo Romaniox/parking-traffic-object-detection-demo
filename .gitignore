@@ -1,0 +1,28 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Env
+# .env
+
+# Data (storage v2: models, images, sqlite db) — local runs only
+backend/data/
+
+# Storage (legacy v1 layout — kept for back-compat)
+backend/storage/uploads/*
+backend/storage/results/*
+!backend/storage/uploads/.gitkeep
+!backend/storage/results/.gitkeep
+
+# Misc
+.DS_Store
+
+# Local Claude settings
+.claude/settings.local.json
