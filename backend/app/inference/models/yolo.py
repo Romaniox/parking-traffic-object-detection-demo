@@ -62,6 +62,6 @@ class YoloDetector(Detector):
             "[yolo] input: H=%d W=%d C=%d dtype=%s",
             arr.shape[0], arr.shape[1], arr.shape[2], arr.dtype,
         )
-        results = model.predict(arr, conf=self.conf, device="cpu", verbose=True, classes=TARGET_CLASS_IDS, imgsz=self.imgsz)
+        results = model.predict(arr, conf=self.conf, device="cpu", verbose=True, classes=TARGET_CLASS_IDS, imgsz=self.imgsz, max_det=9999)
         log.info("[yolo] raw detections: %d", sum(len(r.boxes) for r in results))
         return _to_detections(results)
