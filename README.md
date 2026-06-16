@@ -226,7 +226,9 @@ npm test
 
 The layout adapts to narrow viewports (≤ 880 px): the canvas and sidebar stack vertically, touch targets are enlarged, and the upload zone exposes a camera-capture button on mobile browsers.
 
-![Mobile — annotated result and detection summary](docs/demo/mobile.jpg)
+<p align="center">
+  <img src="docs/demo/mobile.jpg" alt="Mobile — annotated result and detection summary" width="50%" />
+</p>
 
 ---
 
